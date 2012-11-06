@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPoint>
+#include <QColor>
 
 class ClockWidget : public QWidget
 {
@@ -10,6 +11,12 @@ class ClockWidget : public QWidget
 public:
     explicit ClockWidget(QWidget *parent = 0);
     ~ClockWidget();
+
+    void setColor(QColor cl);
+
+private slots:
+    void setColorDialog();
+    void copyToClipSlot();
 
 private:
     void saveState();
@@ -25,7 +32,7 @@ protected:
 private:
     bool press;
     QPoint lastPoint;
-    
+    QColor color;
 };
 
 #endif // CLOCKWIDGET_H

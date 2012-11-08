@@ -4,7 +4,7 @@
 #include "clockwidget.h"
 
 ClockWidget::ClockWidget(QWidget *parent) :
-    QWidget(parent), press(false)
+    QWidget(parent), press(false), rf(0)
 {
     // полупрозрачный фон
     setAttribute(Qt::WA_TranslucentBackground, true);
@@ -77,19 +77,21 @@ void ClockWidget::paintEvent(QPaintEvent *)
     p.drawEllipse(center, r, r); // рисуем окрузность
 
     p.translate(center);
-    p.scale(qMin(h,w) / 200, qMin(h,w) / 200);
+    p.scale(qMin(h,w) / 100.0, qMin(h,w) / 100.0);
 
+    pen.setWidth(3);
+    p.setPen(pen);
     // рисуем часовую стрелку
     p.save();
     qreal offh = ctime.hour() + ctime.minute() / 60.0 ;
     p.rotate(30.0 * offh);
-    p.drawLine(0, 0, 0, -50);
+    p.drawLine(0, 0, 0, -25);
     p.restore();
 
     // минутную
     qreal offm = ctime.minute() + ctime.second() / 60.0;
     p.rotate(6.0 * offm);
-    p.drawLine(0,0, 0, -90);
+    p.drawLine(0,0, 0, -40);
 }
 
 // меняет цвет циферблата и стрелочек
@@ -104,17 +106,20 @@ void ClockWidget::contextMenuEvent(QContextMenuEvent *e)
     QMenu menu(this);
 
     menu.addAction(tr("Choose color..."), this, SLOT(setColorDialog()));
+    menu.addAction(tr("Resize"), this, SLOT(resizeSlot()));
     menu.addSeparator();
 
     QMenu *submenu = menu.addMenu(tr("Copy time to clipboard"));
-    submenu->addAction(tr("hh:mm:ss"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh:mm"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh:mm:ss AP"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh:mm AP"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh.mm.ss"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh.mm"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh.mm.ss AP"), this, SLOT(copyToClipSlot()));
-    submenu->addAction(tr("hh.mm AP"), this, SLOT(copyToClipSlot()));
+
+    ctime = QTime::currentTime();
+    submenu->addAction(ctime.toString("hh:mm:ss"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh:mm"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh:mm:ss AP"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh:mm AP"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh.mm.ss"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh.mm"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh.mm.ss AP"), this, SLOT(copyToClipSlot()));
+    submenu->addAction(ctime.toString("hh.mm AP"), this, SLOT(copyToClipSlot()));
 
     menu.addSeparator();
     // поддерживаем выход (заголовка теперь-то нет)
@@ -151,8 +156,23 @@ void ClockWidget::copyToClipSlot()
 {
     QAction *act = qobject_cast<QAction*>(sender());
 
-    QTime ctime = QTime::currentTime();
-    QString time = ctime.toString(act->text());
     QClipboard *clip = QApplication::clipboard();
-    clip->setText(time);
+    clip->setText(act->text());
+}
+
+void ClockWidget::resizeSlot()
+{
+    if(!rf)
+    {
+        rf = new ResizeForm(size().height());
+        rf->move(pos() - QPoint(100, 100));
+        connect(rf->getSpinBox(), SIGNAL(valueChanged(int)),SLOT(chengeSize(int)));
+    }
+
+    rf->show();
+}
+
+void ClockWidget::chengeSize(int s)
+{
+    resize(s, s);
 }

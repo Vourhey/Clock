@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QPoint>
 #include <QColor>
+#include "resizeform.h"
+#include <QTime>
 
 class ClockWidget : public QWidget
 {
@@ -17,6 +19,8 @@ public:
 private slots:
     void setColorDialog();
     void copyToClipSlot();
+    void resizeSlot();
+    void chengeSize(int);
 
 private:
     void saveState();
@@ -33,6 +37,8 @@ private:
     bool press;
     QPoint lastPoint;
     QColor color;
+    ResizeForm *rf;
+    QTime ctime;
 };
 
 #endif // CLOCKWIDGET_H

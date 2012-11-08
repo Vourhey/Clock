@@ -11,6 +11,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-          clockwidget.cpp
+          clockwidget.cpp \
+    resizeform.cpp
 
-HEADERS  += clockwidget.h
+HEADERS  += clockwidget.h \
+    resizeform.h
+
+FORMS +=

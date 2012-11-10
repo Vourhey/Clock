@@ -8,6 +8,7 @@ QT       += core gui
 
 TARGET = Clock
 TEMPLATE = app
+CONFIG += debug
 
 
 SOURCES += main.cpp\

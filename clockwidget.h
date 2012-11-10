@@ -7,6 +7,8 @@
 #include "resizeform.h"
 #include <QTime>
 
+class QCalendarWidget;
+
 class ClockWidget : public QWidget
 {
     Q_OBJECT
@@ -32,6 +34,7 @@ protected:
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
 
 private:
     bool press;
@@ -39,6 +42,7 @@ private:
     QColor color;
     ResizeForm *rf;
     QTime ctime;
+    QCalendarWidget *calendar;
 };
 
 #endif // CLOCKWIDGET_H

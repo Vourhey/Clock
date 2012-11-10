@@ -4,12 +4,12 @@
 #include "clockwidget.h"
 
 ClockWidget::ClockWidget(QWidget *parent) :
-    QWidget(parent), press(false), rf(0)
+    QWidget(parent), press(false), rf(0), calendar(0)
 {
     // полупрозрачный фон
     setAttribute(Qt::WA_TranslucentBackground, true);
     // без границ и заголовка
-    setWindowFlags(Qt::ToolTip);
+    setWindowFlags(Qt::FramelessWindowHint);
 
     restoreState();
 
@@ -97,7 +97,7 @@ void ClockWidget::paintEvent(QPaintEvent *)
 // меняет цвет циферблата и стрелочек
 void ClockWidget::setColorDialog()
 {
-    setColor(QColorDialog::getColor(color, this, tr("Choose color")));
+    setColor(QColorDialog::getColor(color, this, tr("Choose color"), QColorDialog::ShowAlphaChannel));
 }
 
 // контекстное мени
@@ -175,4 +175,22 @@ void ClockWidget::resizeSlot()
 void ClockWidget::chengeSize(int s)
 {
     resize(s, s);
+}
+
+// Обрабатываем двойное нажатие (Выводим календарь)
+void ClockWidget::mouseDoubleClickEvent(QMouseEvent *e)
+{
+    if(e->button() == Qt::LeftButton)
+    {
+        if(!calendar)
+        {
+            calendar = new QCalendarWidget;
+            calendar->setFirstDayOfWeek(Qt::Monday);
+            calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
+            calendar->move(e->globalPos());
+        }
+        calendar->show();
+    }
+
+    QWidget::mouseDoubleClickEvent(e);
 }
